@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../src/App.scss';
+import "./App.css";
+import { Hooks } from './Hooks';
+import { Type } from './Begin/Type';
 
 
 // Heading component using generics
@@ -13,7 +15,7 @@ const Heading: React.FunctionComponent<{title: string}> = ({title}) => (
 
 
 const Set:React.FunctionComponent<{children: string, mess:string}> = ({children, mess}) =>(
-  <div style={{textAlign: "center", fontSize: "16px", borderRadius: "6px", height: "20px", width: "30px", background:"#ccc"}}>{children}
+  <div style={{textAlign: "center", fontSize: "16px", borderRadius: "6px", height: "20px", width: "30px", background:"#ccc", margin: "0"}}>{children}
   <h2>{mess}</h2>
   </div>
 
@@ -49,29 +51,64 @@ const Increment: React.FunctionComponent<{value: number, setValue:React.Dispatch
 )
 
 
+const Loading: React.FunctionComponent<{load: boolean, setLoad:  React.Dispatch<React.SetStateAction<boolean>>}> = ({load, setLoad}) => (
+  <>
+  <p>Loading....</p>
+  </>
+)
+
+
 function App() {
+
+  const [load, setLoad] = useState<boolean>(false)
 
   const [checked, setChecked] = useState<Payload | null>(null);
 
   const [value, setValue] = useState(0);
 
   useEffect(()=>{
-    fetch("/data.json")
-    .then(res => res.json())
-    .then(data =>{
-      setChecked(data);
+    setTimeout(()=>{
+      fetch("/data.json")
+      .then(res => res.json())
+      .then(data =>{
+        setChecked(data);
+      })
     })
   },[])
 
-  return (
-    <div className="App">
+
+
+
+
+  const reveal = () =>{
+    if(load){
+      return <div>Loading...</div>
+    }
+
+    return (
+      <>
       <h1 style={{textAlign : "center"}}>Hello!</h1>
       <Heading title='Heading title property' />
       <Increment value={value} setValue={setValue} />
-      <Set children= "50" mess='untanned' />
+      <Set children= "" mess='' />
       <Feet text='Filling'></Feet>
 
+      <Hooks />
+
       <Data items={["one","2","3"]} />
+
+      <Loading load={load} setLoad={setLoad} />
+
+      <Type />
+      </>
+    )
+  }
+
+
+
+  return (
+    <div className="App">
+      {reveal()}
     </div>
   );
 }
